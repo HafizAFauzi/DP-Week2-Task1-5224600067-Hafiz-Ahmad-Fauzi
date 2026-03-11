@@ -28,7 +28,7 @@ bool RunSession::phase_checkWin(int score, int target) {
     bool win = score >= target;
     std::cout << "[WIN]      " << score
               << (win ? " >= " : " < ")
-              << target << " (target) → "
+              << target << " (target) : "
               << (win ? "WIN!" : "LOSE!") << "\n";
     return win;
 }
@@ -58,7 +58,7 @@ void RunSession::run() {
     std::cout << "=== RUN START ===\n\n";
 
     for (int round = 1; round <= TOTAL_ROUNDS; ++round) {
-        std::cout << "━━━ Round " << round << " ━━━━━━━━━━━━━━━━━━━━\n";
+        std::cout << "----- Round " << round << " ---------------------\n";
         std::cout << "[TARGET]   Score needed: " << getTargetScore(round) << "\n";
 
         deck.reset();

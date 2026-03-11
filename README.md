@@ -87,6 +87,36 @@ untuk setiap round:
   6. Shop Phase      ← ShopSystem (modifies IScoringRule)
 ```
 
+
+
+## B. Required Modifications
+
+### Modification 1 — RandomInputGenerator
+
+Dibuat class baru `RandomInputGenerator` yang menggantikan `StandardHandGenerator`.
+
+**Perbedaan behavior:**
+- `StandardHandGenerator` → pure uniform random, semua 52 kartu peluang sama
+- `RandomInputGenerator` → bias straight: pilih anchor rank acak (2–10), lalu deal 5 kartu dari window rank `[anchor, anchor+4]` + 2 kartu benar-benar acak dari sisa deck
+
+**Bukti invariant terjaga:** `RunSession` tidak menyebut `RandomInputGenerator` atau `StandardHandGenerator` sama sekali. Satu-satunya perubahan adalah di `main.cpp`, baris:
+```cpp
+// Sebelum:  StandardHandGenerator generator;
+RandomInputGenerator generator;   // ganti satu baris ini
+```
+
+### Modification 2 — FlatBonusRewardRule
+
+Dibuat interface `IRewardRule` dan implementasi `FlatBonusRewardRule`.
+
+**Formula baru:** `reward = score + 2` (menang) / `$1` consolation (kalah)
+
+Reward tidak lagi sama dengan base score, dan `RunSession` tidak tahu formulanya — ia hanya memanggil `rewardRule->computeReward(score, round, win)`.
+
+**Bukti invariant terjaga:** Tidak ada formula `score + 2` di dalam `RunSession`. Untuk mengganti reward formula lagi di masa depan, cukup buat implementasi baru dari `IRewardRule` dan inject di `main.cpp`.
+
+
+
 `RunSession` hanya orchestrate — tidak ada satu pun game logic di dalamnya.
 
 ### Kenapa .h dan .cpp dipisah?
