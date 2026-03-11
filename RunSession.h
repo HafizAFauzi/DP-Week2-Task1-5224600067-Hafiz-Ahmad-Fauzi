@@ -4,6 +4,7 @@
 #include "IHandGenerator.h"
 #include "IHandChooser.h"
 #include "IScoringRule.h"
+#include "IRewardRule.h"
 #include "ShopSystem.h"
 
 // RunSession adalah INVARIANT:
@@ -16,6 +17,7 @@ private:
     IHandGenerator* generator;
     IHandChooser*   chooser;
     IScoringRule*   scoringRule;
+    IRewardRule*    rewardRule;     // Mod 2: reward dipisah ke interface sendiri
     ShopSystem*     shop;
 
     int money = 5;   // starting money untuk bisa beli item pertama di shop
@@ -25,17 +27,17 @@ private:
     void      phase_chooseHand  (TurnInput& input);
     int       phase_computeScore(const TurnInput& input);
     bool      phase_checkWin    (int score, int target);
-    void      phase_countCash   (int score, bool win);
+    void      phase_countCash   (int score, int round, bool win);
     void      phase_shop        ();
     // ─────────────────────────────────────────────────────────────
 
     int getTargetScore(int round) const;
 
 public:
-    // ShopSystem sudah di-construct di luar dengan IScoringRule yang sama
     RunSession(IHandGenerator* gen,
                IHandChooser*   cho,
                IScoringRule*   sc,
+               IRewardRule*    rr,
                ShopSystem*     sh);
 
     void run();
